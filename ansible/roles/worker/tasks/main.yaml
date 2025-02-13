@@ -1,0 +1,13 @@
+- name: Download K3s install script
+  get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s-install.sh
+    mode: '0755'
+
+- name: Install K3s agent
+  shell: |
+    export K3S_TOKEN={{ k3s_token }}
+    export K3S_URL=https://192.168.0.230:6443
+    export INSTALL_K3S_VERSION={{ k3s_version }}
+    /tmp/k3s-install.sh
+  become: yes

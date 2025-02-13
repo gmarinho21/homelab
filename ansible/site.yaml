@@ -1,0 +1,21 @@
+- name: Install K3s master
+  hosts: master
+  roles:
+    - common
+    - master
+
+- name: Install K3s workers
+  hosts: workers
+  roles:
+    - common
+    - worker
+
+- name: Verify cluster status
+  hosts: master
+  roles:
+    - verify
+
+- name: Install ArgoCD
+  hosts: master
+  roles:
+    - argocd

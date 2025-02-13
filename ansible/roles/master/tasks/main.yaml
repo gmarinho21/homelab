@@ -1,0 +1,28 @@
+- name: Download K3s install script
+  get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s-install.sh
+    mode: '0755'
+
+- name: Install K3s master
+  shell: |
+    export K3S_TOKEN={{ k3s_token }}
+    export INSTALL_K3S_VERSION={{ k3s_version }}
+    /tmp/k3s-install.sh
+  become: yes
+
+- name: Wait for node-token file to be created
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+    state: present
+  become: yes
+
+- name: Read node-token from master
+  slurp:
+    path: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+  become: yes
+
+- name: Store node-token
+  set_fact:
+    node_token: "{{ node_token.content | b64decode }}"

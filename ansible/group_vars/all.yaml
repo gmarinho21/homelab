@@ -1,0 +1,4 @@
+k3s_version: v1.28.6+k3s2
+k3s_token: "your-secure-token"  # Change this to a secure token
+argocd_version: v2.10.2
+argocd_password: "your-secure-password"  # Change this to a secure password

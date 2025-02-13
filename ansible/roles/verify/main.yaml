@@ -1,0 +1,20 @@
+- name: Wait for nodes to be ready
+  shell: kubectl get nodes
+  register: nodes_status
+  until: nodes_status.rc == 0 and nodes_status.stdout_lines | length >= 3
+  retries: 30
+  delay: 10
+  become: yes
+
+- name: Display cluster status
+  shell: |
+    echo "Node Status:"
+    kubectl get nodes
+    echo "\nPod Status:"
+    kubectl get pods --all-namespaces
+  register: cluster_status
+  become: yes
+
+- name: Show cluster status
+  debug:
+    var: cluster_status.stdout_lines
