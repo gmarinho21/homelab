@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -89,7 +89,7 @@ func newProxmoxAPI() *ProxmoxAPI {
 func (p *ProxmoxAPI) getVMs() ([]VMInfo, error) {
 	url := fmt.Sprintf("https://%s/api2/json/cluster/resources", p.Host)
 
-	log.Printf("Fetching VMs from %s", url)
+	// log.Printf("Fetching VMs from %s", url)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -105,7 +105,7 @@ func (p *ProxmoxAPI) getVMs() ([]VMInfo, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read VM response: %v", err)
 	}
@@ -122,7 +122,7 @@ func (p *ProxmoxAPI) getVMs() ([]VMInfo, error) {
 		return nil, fmt.Errorf("failed to parse VM response: %v\nResponse body: %s", err, string(body))
 	}
 
-	log.Printf("Successfully fetched %d VMs", len(result.Data))
+	// log.Printf("Successfully fetched %d VMs", len(result.Data))
 	return result.Data, nil
 }
 
@@ -167,6 +167,7 @@ func buildInventory(vms []VMInfo, api *ProxmoxAPI) Inventory {
 	inventory.K3sCluster.Children = []string{"master", "workers"}
 
 	for _, vm := range vms {
+
 		if vm.Status != "running" {
 			continue
 		}
@@ -178,14 +179,13 @@ func buildInventory(vms []VMInfo, api *ProxmoxAPI) Inventory {
 
 		hostVars := HostVars{
 			AnsibleHost:          ip,
-			AnsibleUser:          "your-user",
-			AnsibleSSHPrivateKey: "~/.ssh/id_rsa",
+			AnsibleUser:          "jaka",
+			AnsibleSSHPrivateKey: "~/.ssh/id_rsa_jaka",
 			VMID:                 vm.VMID,
 			Node:                 vm.Node,
 		}
 
-		log.Printf(vm.Name)
-		if strings.Contains(strings.ToLower(vm.Name), "kub") {
+		if strings.Contains(strings.ToLower(vm.Name), "kube") {
 			if strings.Contains(strings.ToLower(vm.Name), "master") {
 				inventory.Master.Hosts = append(inventory.Master.Hosts, vm.Name)
 			} else if strings.Contains(strings.ToLower(vm.Name), "node") {
