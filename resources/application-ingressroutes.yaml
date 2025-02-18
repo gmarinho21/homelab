@@ -1,16 +1,17 @@
-apiVersion: argoprokj.io/v1alpha1
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: ingress-routes
   namespace: argocd
 spec:
-  destination:
-    server: "https://kubernetes.default.svc"
   project: default
   source:
-    path: resources
-    repoURL: "https://github.com/gmarinho21/homelab"
-    targetRevision: master
+    repoURL: 'https://github.com/gmarinho21/Homelab'
+    path: /resources/ingress-routes
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
   syncPolicy:
+    automated: {}
     syncOptions:
       - CreateNamespace=true
