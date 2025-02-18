@@ -17,5 +17,8 @@
 
 - name: Install ArgoCD
   hosts: master
+  vars:
+    ansible_python_interpreter: /opt/ansible_venv/bin/python
   roles:
+    - kubernetes_deps
     - argocd

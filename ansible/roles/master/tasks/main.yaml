@@ -1,3 +1,8 @@
+- name: Set master IP fact
+  set_fact:
+    master_ip: "{{ ansible_host }}"
+    
+
 - name: Download K3s install script
   get_url:
     url: https://get.k3s.io
@@ -6,6 +11,7 @@
 
 - name: Install K3s master
   shell: |
+    export MASTER_IP={{ ansible_host }}
     export K3S_TOKEN={{ k3s_token }}
     export INSTALL_K3S_VERSION={{ k3s_version }}
     /tmp/k3s-install.sh

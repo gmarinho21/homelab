@@ -6,8 +6,9 @@
 
 - name: Install K3s agent
   shell: |
-    export K3S_TOKEN={{ k3s_token }}
-    export K3S_URL=https://192.168.0.230:6443
+    export K3S_TOKEN={{ hostvars['kube-master-1']['node_token']  }}
+    export K3S_NODE_NAME={{ inventory_hostname }}
+    export K3S_URL=https://{{ hostvars['kube-master-1']['master_ip'] }}:6443
     export INSTALL_K3S_VERSION={{ k3s_version }}
     /tmp/k3s-install.sh
   become: yes

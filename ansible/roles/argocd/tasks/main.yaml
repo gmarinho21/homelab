@@ -1,9 +1,10 @@
 - name: Create argocd namespace
-  k8s:
+  kubernetes.core.k8s:
     name: argocd
     api_version: v1
     kind: Namespace
     state: present
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
   become: yes
 
 - name: Download ArgoCD manifest
@@ -11,26 +12,31 @@
     url: "https://raw.githubusercontent.com/argoproj/argo-cd/{{ argocd_version }}/manifests/install.yaml"
     dest: /tmp/argocd-install.yaml
     mode: '0644'
+  become: yes
 
 - name: Install ArgoCD
-  k8s:
+  kubernetes.core.k8s:
     state: present
     src: /tmp/argocd-install.yaml
     namespace: argocd
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
   become: yes
 
 - name: Wait for ArgoCD server deployment
   shell: kubectl wait --for=condition=Available deployment/argocd-server -n argocd --timeout=300s
   become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
 - name: Get ArgoCD initial admin password
   shell: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
   register: argocd_initial_password
   become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
 - name: Display ArgoCD credentials
   debug:
     msg: 
       - "ArgoCD Initial Admin Password: {{ argocd_initial_password.stdout }}"
       - "Access ArgoCD UI at: https://{{ ansible_host }}:30080"
-

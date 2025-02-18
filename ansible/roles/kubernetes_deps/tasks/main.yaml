@@ -1,0 +1,36 @@
+# roles/kubernetes_deps/tasks/main.yml
+---
+- name: Create virtual environment directory
+  file:
+    path: /opt/ansible_venv
+    state: directory
+    mode: '0755'
+  become: yes
+
+- name: Ensure python3-venv is installed
+  apt:
+    name: python3-venv
+    state: present
+  become: yes
+
+- name: Create virtual environment
+  command: python3 -m venv /opt/ansible_venv
+  args:
+    creates: /opt/ansible_venv/bin/python
+  become: yes
+
+- name: Upgrade pip and install base packages
+  shell: |
+    /opt/ansible_venv/bin/pip install --upgrade pip setuptools wheel packaging
+  become: yes
+
+- name: Install Kubernetes packages
+  shell: |
+    /opt/ansible_venv/bin/pip install kubernetes>=12.0.0 PyYAML jsonpatch
+  become: yes
+
+# Make sure pip installations succeeded
+- name: Verify kubernetes module is available
+  command: /opt/ansible_venv/bin/python -c "import kubernetes"
+  become: yes
+  changed_when: false
