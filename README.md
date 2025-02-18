@@ -15,8 +15,8 @@ This repository documents my homelab infrastructure, which serves as a practical
 | Network | 1GbE Ethernet |
 | Hypervisor | Proxmox VE |
 |-----------|--------------|
-| Model | Intel OptiPlex 3080 Micro |
 | Node | pve2 |
+| Model | Intel OptiPlex 3080 Micro |
 | CPU | Intel Core i5-10500 |
 | RAM | 16GB DDR4 |
 | Storage | 500GB NVMe SSD and 1TB Sata HD |
@@ -35,7 +35,7 @@ This repository documents my homelab infrastructure, which serves as a practical
 | K3s Master | VM | 192.168.0.230 | Kubernetes cluster master node running K3s and ArgoCD | pve1 |
 | K3s Worker 1 | VM | 192.168.0.231 | Kubernetes cluster worker node | pve1 |
 | K3s Worker 2 | VM | 192.168.0.232 | Kubernetes cluster worker node | pve1 |
-| Boxofmanythings | VM | Internal | Development environment with tools and utilities | pve1 |
+| Boxofmanythings | VM | 192.168.0.80 | Development environment with tools and utilities | pve1 |
 | NAS | VM | 192.168.0.50 | Storage for applications and backup | pve2 |
 
 ## Kubernetes Cluster Details
