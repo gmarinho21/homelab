@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/gmarinho21/Homelab'
-    path: resources/applications
+    path: resources/applications/*
     targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
@@ -15,3 +15,4 @@ spec:
     automated: {}
     syncOptions:
       - CreateNamespace=true
+      - Prune=true
