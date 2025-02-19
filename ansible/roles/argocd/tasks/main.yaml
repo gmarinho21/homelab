@@ -30,14 +30,14 @@
 
 - name: Copy application-ingressroutes.yaml to remote
   ansible.builtin.copy:
-    src: ../resources/application-ingressroutes.yaml
-    dest: /tmp/application-ingressroutes.yaml
+    src: ../resources/initial-application.yaml
+    dest: /tmp/initial-application.yaml
 
 - name: Deploy ArgoCD Bootstrap Application
   kubernetes.core.k8s:
     state: present
     namespace: argocd
-    src: /tmp/application-ingressroutes.yaml
+    src: /tmp/initial-application.yaml
     kubeconfig: /etc/rancher/k3s/k3s.yaml
 
 - name: Get ArgoCD initial admin password
