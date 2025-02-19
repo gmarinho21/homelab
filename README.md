@@ -1,7 +1,7 @@
 # 🏠 Personal Homelab Infrastructure
 
 ## Overview
-This repository documents my homelab infrastructure, which serves as a practical demonstration of my DevOps skills and experience. The lab is built around a Beelink Mini PC Sei12 running Proxmox VE as the hypervisor, hosting various virtual machines and containers for different services.
+This repository documents my homelab infrastructure, which serves as a practical demonstration of my DevOps skills and experience. The lab is built around a Beelink Mini PC Sei12 and a Intel NUC, both running Proxmox VE as the hypervisor in a cluster, hosting various virtual machines and containers for different services.
 
 ## Hardware Specifications
 
@@ -83,7 +83,7 @@ WIP
 - Security updates and patches
 
 ## Future Improvements
-- [ ] Implement cluster monitoring with Prometheus and Grafana
+- [x] Implement cluster monitoring with Prometheus and Grafana
 - [ ] Add automated backup solution
 - [x] Implement infrastructure as code using Terraform
 - [ ] Add network security monitoring
