@@ -17,6 +17,10 @@ spec:
             enabled: true
             label: grafana_dashboard
             searchNamespace: ALL
+          datasources:
+            enabled: true
+            label: grafana_dashboard
+            searchNamespace: ALL
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: grafana
