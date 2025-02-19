@@ -10,8 +10,8 @@ spec:
   routes:
     - match: HostSNI(`*`)
       services:
-        - name: prometheus-kube-prometheus-prometheus
-          port: 9090
+        - name: prometheus-server 
+          port: 80
           terminationDelay: -1
 
 ---
@@ -28,5 +28,5 @@ spec:
       match: Host(`prometheus.gabrielm.com.br`)
       services:
         - kind: Service
-          name: prometheus-kube-prometheus-prometheus
-          port: 9090
+          name: prometheus-server 
+          port: 80
