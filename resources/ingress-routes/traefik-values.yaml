@@ -1,0 +1,23 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    logs:
+      general:
+        level: "DEBUG"
+    ports:
+      argocd:
+        port: 8080
+        expose:
+          default: true
+        exposedPort: 8080
+        protocol: TCP
+      prometheus:
+        port: 9090
+        expose: 
+          default: true
+        exposedPort: 9090
+        protocol: TCP
