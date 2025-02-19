@@ -1,18 +1,28 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: applications-manager
   namespace: argocd
 spec:
-  project: default
-  source:
-    repoURL: 'https://github.com/gmarinho21/Homelab'
-    path: resources/applications/*
-    targetRevision: HEAD
-  destination:
-    server: 'https://kubernetes.default.svc'
-  syncPolicy:
-    automated: {}
-    syncOptions:
-      - CreateNamespace=true
-      - Prune=true
+  generators:
+    - git:
+        repoURL: 'https://github.com/gmarinho21/Homelab'
+        revision: HEAD
+        directories:
+          - path: resources/applications/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/gmarinho21/Homelab'
+        path: '{{path}}'
+        targetRevision: HEAD
+      destination:
+        server: 'https://kubernetes.default.svc'
+      syncPolicy:
+        automated: {}
+        syncOptions:
+          - CreateNamespace=true
+          - Prune=true
