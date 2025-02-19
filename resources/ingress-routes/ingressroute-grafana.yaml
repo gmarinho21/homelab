@@ -1,0 +1,32 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: grafana-ingress
+  namespace: grafana
+spec:
+  entryPoints:
+    - grafana
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: grafana 
+          port: 80
+          terminationDelay: -1
+
+---
+apiVersion: traefik.containo.us/v1alpha1 
+kind: IngressRoute
+metadata:
+  name: ingressroute-web-grafana
+  namespace: grafana
+spec:
+  entryPoints:
+    - grafana
+  routes:
+    - kind: Rule
+      match: Host(`grafana.gabrielm.com.br`)
+      services:
+        - kind: Service
+          name: grafana
+          port: 80
