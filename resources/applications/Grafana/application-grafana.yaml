@@ -11,6 +11,12 @@ spec:
     targetRevision: 8.10.0
     helm:
       releaseName: grafana
+      values: |
+        sidecar:
+          dashboards:
+            enabled: true
+            label: grafana_dashboard
+            folder: /var/lib/grafana/dashboards
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: grafana
