@@ -1,0 +1,32 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: prometheus-ingress
+  namespace: prometheus
+spec:
+  entryPoints:
+    - prometheus
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: prometheus-kube-prometheus-prometheus
+          port: 9090
+          terminationDelay: -1
+
+---
+apiVersion: traefik.containo.us/v1alpha1 
+kind: IngressRoute
+metadata:
+  name: ingressroute-web-prometheus
+  namespace: prometheus
+spec:
+  entryPoints:
+    - prometheus
+  routes:
+    - kind: Rule
+      match: Host(`prometheus.gabrielm.com.br`)
+      services:
+        - kind: Service
+          name: prometheus-kube-prometheus-prometheus
+          port: 9090
