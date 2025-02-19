@@ -16,7 +16,7 @@ spec:
           dashboards:
             enabled: true
             label: grafana_dashboard
-            folder: /var/lib/grafana/dashboards
+            searchNamespace: ALL
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: grafana
