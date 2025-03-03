@@ -128,6 +128,7 @@ func (p *ProxmoxAPI) getVMs() ([]VMInfo, error) {
 
 func (p *ProxmoxAPI) getVMIP(node string, vmid int) string {
 	url := fmt.Sprintf("https://%s/api2/json/nodes/%s/qemu/%d/agent/network-get-interfaces", p.Host, node, vmid)
+	// log.Printf(url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return ""
@@ -148,7 +149,7 @@ func (p *ProxmoxAPI) getVMIP(node string, vmid int) string {
 	}
 
 	for _, iface := range result.Data.Result {
-		if iface.Name != "ens18" {
+		if iface.Name != "ens18" && iface.Name != "eth0" {
 			continue
 		}
 		for _, ip := range iface.IPAddresses {
