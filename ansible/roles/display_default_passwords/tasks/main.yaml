@@ -1,0 +1,39 @@
+- name: Get ArgoCD initial admin password
+  shell: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+  register: argocd_initial_password
+  become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Wait for Grafana deployment to be created
+  shell: |
+    until kubectl get deployment grafana -n grafana; do echo "Waiting for Grafana deployment to be created..."; sleep 10; done
+  become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Wait for Grafana deployment to be available
+  shell: kubectl wait --for=condition=available deployment/grafana -n grafana --timeout=300s
+  become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  ignore_errors: yes
+
+- name: Get Grafana initial admin password
+  shell: kubectl get secret --namespace grafana grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+  register: grafana_initial_password
+  become: yes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Display ArgoCD credentials
+  debug:
+    msg: 
+      - "ArgoCD Initial Admin Password: {{ argocd_initial_password.stdout }}"
+      - "Access ArgoCD UI at: https://{{ ansible_host }}:8080"
+
+- name: Display Grafana credentials
+  debug:
+    msg: 
+      - "Grafana Initial Admin Password: {{ grafana_initial_password.stdout }}"
+      - "Access Grafana UI at: http://{{ ansible_host }}:7070"

@@ -1,0 +1,18 @@
+- name: Copy application-ingressroutes.yaml to remote
+  ansible.builtin.copy:
+    src: ../resources/initial-application.yaml
+    dest: /tmp/initial-application.yaml
+
+- name: Deploy ArgoCD Bootstrap Application
+  kubernetes.core.k8s:
+    state: present
+    namespace: argocd
+    src: /tmp/initial-application.yaml
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+  become: yes
+
+- name: Copy traefik-config.yaml to remote // Set up traefik entrypoints
+  ansible.builtin.copy:
+    src: ../resources/traefik-config.yaml
+    dest: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+  become: yes

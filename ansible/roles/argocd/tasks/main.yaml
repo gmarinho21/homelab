@@ -27,28 +27,3 @@
   become: yes
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-
-- name: Copy application-ingressroutes.yaml to remote
-  ansible.builtin.copy:
-    src: ../resources/initial-application.yaml
-    dest: /tmp/initial-application.yaml
-
-- name: Deploy ArgoCD Bootstrap Application
-  kubernetes.core.k8s:
-    state: present
-    namespace: argocd
-    src: /tmp/initial-application.yaml
-    kubeconfig: /etc/rancher/k3s/k3s.yaml
-
-- name: Get ArgoCD initial admin password
-  shell: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-  register: argocd_initial_password
-  become: yes
-  environment:
-    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-
-- name: Display ArgoCD credentials
-  debug:
-    msg: 
-      - "ArgoCD Initial Admin Password: {{ argocd_initial_password.stdout }}"
-      - "Access ArgoCD UI at: https://{{ ansible_host }}:30080"

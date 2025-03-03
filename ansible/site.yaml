@@ -15,10 +15,18 @@
   roles:
     - verify
 
-- name: Install ArgoCD
+- name: Create python venv
   hosts: master
-  vars:
-    ansible_python_interpreter: /opt/ansible_venv/bin/python
   roles:
     - kubernetes_deps
+
+- name: Install ArgoCD
+  hosts: master
+  roles:
     - argocd
+
+- name: Bootstrap applications
+  hosts: master
+  roles:
+    - application_setup
+    - display_default_passwords

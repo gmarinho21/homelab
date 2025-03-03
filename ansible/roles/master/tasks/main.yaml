@@ -7,13 +7,14 @@
   get_url:
     url: https://get.k3s.io
     dest: /tmp/k3s-install.sh
-    mode: '0755'
+    mode: '0775'
 
 - name: Install K3s master
   shell: |
     export MASTER_IP={{ ansible_host }}
     export K3S_TOKEN={{ k3s_token }}
     export INSTALL_K3S_VERSION={{ k3s_version }}
+    export K3S_NODE_NAME={{ inventory_hostname }}
     /tmp/k3s-install.sh
   become: yes
 
@@ -32,3 +33,37 @@
 - name: Store node-token
   set_fact:
     node_token: "{{ node_token.content | b64decode }}"
+
+- name: Create .kube directory
+  file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    state: directory
+    mode: '0755'
+
+- name: Copy kubeconfig to user directory
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+    remote_src: yes
+    mode: '0600'
+  become: yes
+
+- name: Change ownership of .kube/config
+  file:
+    path: "{{ ansible_env.HOME }}/.kube/config"
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+    mode: '0600'
+  become: yes
+
+- name: Export KUBECONFIG in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'export KUBECONFIG=$HOME/.kube/config'
+    state: present
+
+- name: Setup alias for kubectl
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'alias k=kubectl'
+    state: present
