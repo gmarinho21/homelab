@@ -1,77 +1,106 @@
-resource "proxmox_vm_qemu" "kube-master-1" {
-  name        = "kube-master-1"
-  target_node = "pve2"
-  clone       = "template"
-  full_clone  = true
-  os_type     = "ubuntu"  
-  cores       = 4      
-  memory      = 4096       
-  bios = "ovmf"
-  agent = 1
-  
-  disk {
-    size     = "64G"
-    storage  = "local-lvm"       # Storage pool where the disk is located
-    slot     = "scsi0"           # Interface slot to attach the disk
-  }
-    scsihw   = "virtio-scsi-pci"
+data "local_file" "ssh_public_key" {
+  filename = "/home/jaka/.ssh/id_rsa_proxmox.pub"
+}
 
-  network {
-    id     = 0
-    model  = "virtio"
-    bridge = "vmbr0"
-    firewall = true
+resource "proxmox_virtual_environment_file" "user_data_cloud_config" {
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = "pve2"
+
+  source_raw {
+    data = <<-EOF
+    #cloud-config
+    users:
+      - default
+      - name: jaka
+        groups:
+          - sudo
+        shell: /bin/bash
+        ssh_authorized_keys:
+          - ${trimspace(data.local_file.ssh_public_key.content)}
+        sudo: ALL=(ALL) NOPASSWD:ALL
+    runcmd:
+        - apt update
+        - apt install -y qemu-guest-agent net-tools
+        - timedatectl set-timezone America/Cuiaba
+        - systemctl enable qemu-guest-agent
+        - systemctl start qemu-guest-agent
+        - echo "done" > /tmp/cloud-config.done
+    EOF
+
+    file_name = "user-data-cloud-config.yaml"
   }
 }
 
-resource "proxmox_vm_qemu" "kube-node-1" {
-  name        = "kube-node-1"
-  target_node = "pve2"
-  clone       = "template"
-  full_clone  = true
-  os_type     = "ubuntu"  
-  cores       = 3      
-  memory      = 2048
-  bios = "ovmf"
-  agent = 1
-  scsihw   = "virtio-scsi-pci"
+resource "proxmox_virtual_environment_file" "meta_data_cloud_config" {
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = "pve2"
 
-  disk {
-    size     = "64G"
-    storage  = "local-lvm"       # Storage pool where the disk is located
-    slot     = "scsi0"           # Interface slot to attach the disk
-  }
+  source_raw {
+    data = <<-EOF
+    #cloud-config
+    local-hostname: kube-master-1
+    EOF
 
-  network {
-    id     = 0
-    model  = "virtio"
-    bridge = "vmbr0"
-    firewall = true
+    file_name = "meta-data-cloud-config.yaml"
   }
 }
 
-resource "proxmox_vm_qemu" "kube-node-2" {
-  name        = "kube-node-2"
-  target_node = "pve2"
-  clone       = "template"
-  full_clone  = true
-  os_type     = "ubuntu"  
-  cores       = 3      
-  memory      = 2048       
-  bios = "ovmf"
-  agent = 1
-  scsihw   = "virtio-scsi-pci"
+resource "proxmox_virtual_environment_vm" "kube-master-1" {
+  name      = "kube-master-1"
+  node_name = "pve2"
+
+  vm_id = 201
+
+  agent {
+    enabled = true
+  }
+
+  initialization {
+    ip_config {
+      ipv4 {
+        address = "192.168.0.233/24"
+        gateway = "192.168.0.1"
+      }
+    }
+
+    user_data_file_id = proxmox_virtual_environment_file.user_data_cloud_config.id
+    meta_data_file_id = proxmox_virtual_environment_file.meta_data_cloud_config.id
+
+
+  }
+
+  cpu {
+    cores = 2
+    type  = "x86-64-v2-AES" # recommended for modern CPUs
+  }
+
+  memory {
+    dedicated = 2048
+    floating  = 2048 # set equal to dedicated to enable ballooning
+  }
+  bios = "seabios"
 
   disk {
-    size     = "64G"
-    storage  = "local-lvm"       # Storage pool where the disk is located
-    slot     = "scsi0"           # Interface slot to attach the disk
+    datastore_id = "local-lvm"
+    file_id      = proxmox_virtual_environment_download_file.ubuntu_cloud_image.id
+    interface    = "scsi0"
+    size         = 20
   }
 
-  network {
-    id     = 0
-    model  = "virtio"
+  network_device {
     bridge = "vmbr0"
-    firewall = true
   }
 }
+
+resource "proxmox_virtual_environment_download_file" "ubuntu_cloud_image" {
+  content_type = "iso"
+  datastore_id = "local"
+  node_name    = "pve2"
+
+  url = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+
+}
+
+

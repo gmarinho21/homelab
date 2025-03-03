@@ -1,15 +1,19 @@
 terraform {
   required_providers {
     proxmox = {
-      source = "telmate/proxmox"
-      version = "3.0.1-rc6"
+      source = "bpg/proxmox"
+      version = "0.73.0"
     }
   }
 }
 
 provider "proxmox" {
-  pm_api_url = "https://pve.gabrielm.com.br/api2/json"
-  pm_api_token_id     = var.pm_api_token_id
-  pm_api_token_secret = var.pm_api_token_secret
-  pm_tls_insecure = true
+  endpoint = "https://pve.gabrielm.com.br"
+  api_token = var.virtual_environment_api_token
+  insecure  = true
+  ssh {
+    agent = true
+    username = "root"
+    private_key = file("~/.ssh/id_rsa_terraform")
+  }
 }
