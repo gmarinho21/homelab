@@ -28,3 +28,10 @@ spec:
     automated: {}
     syncOptions:
       - CreateNamespace=true
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: grafana-admin-credentials
+    namespace: grafana 
+    jsonPointers:
+    - /data
