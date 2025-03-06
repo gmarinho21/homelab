@@ -3,7 +3,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRouteTCP
 metadata:
   name: kuma-ingress
-  namespace: monitoring
+  namespace: kuma
 spec:
   entryPoints:
     - kuma
@@ -19,7 +19,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: ingressroute-web-kuma
-  namespace: monitoring
+  namespace: kuma
 spec:
   entryPoints:
     - web
