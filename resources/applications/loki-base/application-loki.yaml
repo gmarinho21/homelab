@@ -40,10 +40,16 @@ spec:
             enabled: false
           selfMonitoring:
             enabled: false
+            grafanaAgent:
+              installOperator: false
           serviceMonitor:
             enabled: false
         test:
           enabled: false
+        grafanaAgent:
+          installOperator: false
+          crds:
+            create: false
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: loki
