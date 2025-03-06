@@ -35,3 +35,9 @@ spec:
     namespace: grafana 
     jsonPointers:
     - /data
+    - group: ""
+    kind: Deployment
+    name: grafana
+    namespace: grafana 
+    jsonPointers:
+    - /spec/template/metadata/annotations/checksum/secret
