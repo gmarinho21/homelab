@@ -13,3 +13,10 @@ stringData:
         type: prometheus
         url: http://prometheus-server.prometheus.svc.cluster.local
         editable: false
+  loki.yaml: |-
+    apiVersion: 1
+    datasources:
+      - name: loki
+        type: loki
+        url: http://loki-gateway.loki.svc.cluster.local
+        editable: false

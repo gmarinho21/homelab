@@ -18,3 +18,9 @@ spec:
           default: true  
         exposedPort: 7070
         protocol: TCP    
+      kuma:
+        port: 3001
+        expose:
+          default: true  
+        exposedPort: 3001
+        protocol: TCP

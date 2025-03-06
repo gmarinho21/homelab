@@ -1,0 +1,32 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: kuma-ingress
+  namespace: monitoring
+spec:
+  entryPoints:
+    - kuma
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: my-uptime-kuma
+          port: 3001
+          terminationDelay: -1
+
+---
+apiVersion: traefik.containo.us/v1alpha1 
+kind: IngressRoute
+metadata:
+  name: ingressroute-web-kuma
+  namespace: monitoring
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`kuma.gabrielm.com.br`)
+      services:
+        - kind: Service
+          name: my-uptime-kuma
+          port: 3001
