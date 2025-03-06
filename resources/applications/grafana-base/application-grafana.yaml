@@ -31,7 +31,7 @@ spec:
   ignoreDifferences:
   - group: ""
     kind: Secret
-    name: grafana-admin-credentials
+    name: grafana
     namespace: grafana 
     jsonPointers:
     - /data
