@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard
+  name: grafana-loki-dashboard
   namespace: grafana
   labels:
     grafana_dashboard: "1"
@@ -28,14 +28,14 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 3,
+      "id": 2,
       "links": [],
       "liveNow": true,
       "panels": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "feeyywa4yqewwa"
+            "uid": "P982945308D3682D1"
           },
           "fieldConfig": {
             "defaults": {
@@ -113,7 +113,7 @@ data:
             {
               "datasource": {
                 "type": "loki",
-                "uid": "feeyywa4yqewwa"
+                "uid": "P982945308D3682D1"
               },
               "editorMode": "code",
               "expr": "sum(count_over_time({namespace=~\"$namespace\", pod=~\"$pod\"} |~ \"$search\"[$__interval]))",
@@ -127,7 +127,7 @@ data:
         {
           "datasource": {
             "type": "loki",
-            "uid": "feeyywa4yqewwa"
+            "uid": "P982945308D3682D1"
           },
           "fieldConfig": {
             "defaults": {},
@@ -156,7 +156,7 @@ data:
             {
               "datasource": {
                 "type": "loki",
-                "uid": "feeyywa4yqewwa"
+                "uid": "P982945308D3682D1"
               },
               "editorMode": "code",
               "expr": "{namespace=~\"$namespace\", pod=~\"$pod\"} |~ \"(?i)$search\"",
@@ -177,12 +177,12 @@ data:
           {
             "allValue": ".+",
             "current": {
-              "text": "argocd",
-              "value": "argocd"
+              "text": "All",
+              "value": "$__all"
             },
             "datasource": {
               "type": "loki",
-              "uid": "feeyywa4yqewwa"
+              "uid": "P982945308D3682D1"
             },
             "definition": "",
             "includeAll": true,
@@ -207,7 +207,7 @@ data:
             },
             "datasource": {
               "type": "loki",
-              "uid": "feeyywa4yqewwa"
+              "uid": "P982945308D3682D1"
             },
             "definition": "",
             "includeAll": true,
