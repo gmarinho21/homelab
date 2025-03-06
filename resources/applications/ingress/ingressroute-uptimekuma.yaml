@@ -10,7 +10,7 @@ spec:
   routes:
     - match: HostSNI(`*`)
       services:
-        - name: my-uptime-kuma
+        - name: uptime-kuma
           port: 3001
           terminationDelay: -1
 
@@ -28,5 +28,5 @@ spec:
       match: Host(`kuma.gabrielm.com.br`)
       services:
         - kind: Service
-          name: my-uptime-kuma
+          name: uptime-kuma
           port: 3001
